@@ -34,9 +34,20 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      - name: Install deps
-        if: steps.detect.outputs.package_json == 'yes'
-        run: npm ci
+      - name: Install dependencies
+        if: steps.detect.outputs.has_pkg_json == 'yes'
+        run: |
+          if [ -f pnpm-lock.yaml ]; then
+            corepack enable pnpm
+            pnpm i --frozen-lockfile || pnpm install
+          elif [ -f yarn.lock ]; then
+            corepack enable yarn
+            yarn install --frozen-lockfile || yarn install
+          elif [ -f package-lock.json ]; then
+            npm ci || npm install --no-audit --no-fund
+          else
+            npm install --no-audit --no-fund
+          fi
 
       - name: Build (if build script exists)
         if: steps.detect.outputs.package_json == 'yes'
