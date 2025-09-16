@@ -161,15 +161,9 @@ const LandingPage = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <div className="flex justify-center space-x-8 mb-4">
-                <a href="#" className="text-gray-600 hover:text-gray-900 text-sm transition-colors duration-200">
-                  About
-                </a>
-                <a href="#" className="text-gray-600 hover:text-gray-900 text-sm transition-colors duration-200">
-                  Privacy
-                </a>
-                <a href="#" className="text-gray-600 hover:text-gray-900 text-sm transition-colors duration-200">
-                  Contact
-                </a>
+                <a href="/about"   className="text-sm text-gray-600 hover:underline">About</a>
+                <a href="/privacy" className="text-sm text-gray-600 hover:underline">Privacy</a>
+                <a href="/contact" className="text-sm text-gray-600 hover:underline">Contact</a>
               </div>
               <p className="text-gray-500 text-xs">
                 © 2024 Two Loonies. All rights reserved.
