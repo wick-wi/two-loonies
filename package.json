@@ -1,6 +1,7 @@
 {
   "name": "two-loonies",
   "version": "0.1.0",
+  "homepage": "https://wick-wi.github.io/two-loonies/",
   "private": true,
   "dependencies": {
     "react": "^18.3.1",
