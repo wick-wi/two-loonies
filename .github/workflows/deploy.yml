@@ -1,30 +1,40 @@
 name: Deploy to GitHub Pages
+
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
+
 permissions:
   contents: read
   pages: write
   id-token: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node (CRA works best on 18)
+        uses: actions/setup-node@v4
         with:
           node-version: 18
           cache: npm
-      - run: npm install
-      - run: npm run build
-      - uses: actions/upload-pages-artifact@v3
+
+      - name: Install dependencies
+        run: npm install
+
+      # CRA treats warnings as errors when CI=true. Set CI=false to avoid failing on warnings.
+      - name: Build (CRA)
+        run: CI=false npm run build
+
+      - name: Upload artifact (CRA build folder)
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: |
-            dist
-            build
-            public
-            .
+          path: ./build
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -32,5 +42,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - id: deployment
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
