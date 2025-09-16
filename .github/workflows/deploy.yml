@@ -1,83 +1,30 @@
-
 name: Deploy to GitHub Pages
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
-
 permissions:
   contents: read
   pages: write
   id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Detect project type (basic)
-        id: detect
-        run: |
-          echo "package_json=$([ -f package.json ] && echo yes || echo no)" >> $GITHUB_OUTPUT
-          echo "vite_config=$([ -f vite.config.js ] || [ -f vite.config.ts ] && echo yes || echo no)" >> $GITHUB_OUTPUT
-          echo "has_public=$([ -f index.html ] || [ -f public/index.html ] && echo yes || echo no)" >> $GITHUB_OUTPUT
-
-      - name: Setup Node (only if package.json exists)
-        if: steps.detect.outputs.package_json == 'yes'
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'npm'
-
-      - name: Install dependencies
-        if: steps.detect.outputs.has_pkg_json == 'yes'
-        run: |
-          if [ -f pnpm-lock.yaml ]; then
-            corepack enable pnpm
-            pnpm i --frozen-lockfile || pnpm install
-          elif [ -f yarn.lock ]; then
-            corepack enable yarn
-            yarn install --frozen-lockfile || yarn install
-          elif [ -f package-lock.json ]; then
-            npm ci || npm install --no-audit --no-fund
-          else
-            npm install --no-audit --no-fund
-          fi
-
-      - name: Build (if build script exists)
-        if: steps.detect.outputs.package_json == 'yes'
-        run: |
-          if npm run | grep -qE "^  build"; then
-            npm run build
-          else
-            echo "No build script found; will deploy static files."
-          fi
-
-      - name: Resolve output folder
-        id: out
-        run: |
-          if [ -d dist ]; then
-            echo "dir=dist" >> $GITHUB_OUTPUT
-          elif [ -d build ]; then
-            echo "dir=build" >> $GITHUB_OUTPUT
-          elif [ -d public ]; then
-            echo "dir=public" >> $GITHUB_OUTPUT
-          else
-            echo "dir=." >> $GITHUB_OUTPUT
-          fi
-          echo "Using output dir: $(cat $GITHUB_OUTPUT)"
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+          node-version: 18
+          cache: npm
+      - run: npm install
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ steps.out.outputs.dir }}
-
+          path: |
+            dist
+            build
+            public
+            .
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -85,6 +32,5 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
