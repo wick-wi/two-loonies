@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const LandingPage = () => {
   return (
@@ -15,12 +16,18 @@ const LandingPage = () => {
               A simple way to understand your spending and make smarter financial decisions.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <button className="bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-8 rounded-lg text-lg transition-colors duration-200 shadow-lg hover:shadow-xl">
+              <Link 
+                to="/upload"
+                className="bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-8 rounded-lg text-lg transition-colors duration-200 shadow-lg hover:shadow-xl inline-block text-center"
+              >
                 Upload a Statement
-              </button>
-              <button className="border-2 border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 font-semibold py-4 px-8 rounded-lg text-lg transition-colors duration-200 bg-white hover:bg-gray-50">
+              </Link>
+              <Link 
+                to="/manual"
+                className="border-2 border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 font-semibold py-4 px-8 rounded-lg text-lg transition-colors duration-200 bg-white hover:bg-gray-50 inline-block text-center"
+              >
                 Enter Data Manually
-              </button>
+              </Link>
             </div>
           </div>
         </section>
